@@ -242,7 +242,7 @@ t_node  *find_cycle_strt(t_node *head)
     return NULL;
 
   t_node  *slow = head;
-  t_ndoe  *fast = head;
+  t_node  *fast = head;
 
   while(fast && fast->next)
   {
