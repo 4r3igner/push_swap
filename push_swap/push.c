@@ -1,42 +1,101 @@
 #include "push_swap.h"
 
-
-void pa(c_llist **head_a, c_llist **head_b)
+static c_llist  *extract(c_llist **head)
 {
-  if(!head_a || !(*head_a) || !head_b || !(*head_b))
-    return;
+  c_llist *second;
+  c_llist *extracted;
+  c_llist *last;
+  extracted = (*head);
+  second = (*head)->next;
+  last = (*head)->prev;
 
-  c_llist *second_a;
-  second_a = (*head)->next;
+  if(second == extracted)
+  {
+    *head = NULL;
+    return extracted;
+  }
+  last->next = second;
+  second->prev = last;
 
-  second_a->prev = (*head_a)->prev;
-  (*head_a)->prev->next = second_a;
-  
-  (*head_b)->prev->next = *head_a;
-  (*head_a)->prev = (*head_b)->prev;
-  (*head_a)->next = *head_b;
-  (*head_b)->prev = *head_a;
+  extracted->prev = extracted;
+  extracted->next = extracted;
 
-  *head_a = second_a;
-  *head_b = *head_a;
+  *head = second;
+
+  return extracted;
 }
 
-void pb(c_llist **head_a, c_llist **head_b)
+static void insert(c_llist  *node,c_llist **stack)
 {
-  if(!head_a || !(*head_a) || !head_b || !(*head_b))
+  if(*stack == NULL)
+  {
+    *stack = node;
+    return;
+  }
+
+  (*stack)->prev->next = node;
+  node->prev = (*stack)->prev;
+  node->next = *stack;
+  (*stack)->prev = node;
+
+  *stack = node;
+}
+
+void pa(c_llist **head_a,c_llist  **head_b)
+{
+  if(!head_b || !(*head_b))
     return;
 
-  c_llist *second_b;
-  second_b = (*head)->next;
-
-  second_b->prev = (*head_b)->prev;
-  (*head_b)->prev->next = second_b;
+  insert(extract(head_b),head_a);
   
-  (*head_a)->prev->next = *head_b;
-  (*head_b)->prev = (*head_a)->prev;
-  (*head_b)->next = *head_a;
-  (*head_a)->prev = *head_b;
-
-  *head_b = second_b;
-  *head_a = *head_b;
+  write(1,"pa\n",3);
 }
+
+void pb(c_llist **head_a,c_llist **head_b)
+{
+  if(!head_a || !(*head_a))
+    return;
+
+  insert(extract(head_a),head_b);
+
+  write(1,"pb\n",3);
+}
+/*
+static void more_and_null(c_llist **head_1,c_llist  **head_2, c_llist *second)
+{
+  (*head_1)->prev->next = second;
+  second->prev = (*head_1)->prev;
+
+  (*head_1)->prev = *head_1;
+  (*head_1)->next = *head_1;
+
+  *head_2 = *head_1;
+  *head_1 = second; 
+}
+
+static void one_and_more(c_llist  **head_1, c_llist **head_2, c_llist *second)
+{
+  (*head_2)->prev->next = second;
+  second->prev = (*head_2)->prev;
+  (*head_2)->prev = second;
+  second->next = *head_2;
+  *head_2 = second;
+
+  *head_1 = NULL;
+}
+
+static void more_than_1(c_llist **head_1,c_llist  **head_2, c_llist *second)
+{
+  (*head_1)->prev->next =(*head)->next;
+  (*head_1)->next->prev = (*head)->prev;
+
+  (*head_2)->prev->next = *head_1;
+  (*head_1)->prev = (*head_2)->prev;
+  (*head_1)->next = *head_2;
+  (*head_2)->prev = *head_1;
+
+  *head_2 = *head_1;
+  *head_1 = second;
+}
+*/
+
