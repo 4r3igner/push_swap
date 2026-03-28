@@ -2,8 +2,9 @@ NAME        = push_swap
 CC          = cc
 CFLAGS      = -Wall -Wextra -Werror -g
 
-SRC         = main.c, utils.c, push_swap.c\
-              # Append future source files here
+SRC         = main.c	push_swap.c	push.c	rotate.c \
+							reverse_rotate.c	stack_controls.c	swap.c
+              
 
 OBJ         = $(SRC:.c=.o)
 
