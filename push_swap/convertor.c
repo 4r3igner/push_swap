@@ -44,7 +44,6 @@ void artons(char *src, int *arr, int *global_p)
 			src++;
 		if (*src == '\0')
 			break ;
-		// Notice we pass &src so arton_loop updates the real pointer
 		arton_loop(&src, arr, global_p);
 	}
 }
