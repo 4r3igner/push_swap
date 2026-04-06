@@ -1,79 +1,83 @@
 #include "push_swap.h"
 
-static void init_loop_atoi(char *src, int  *error_flag, int *sign)
+static void	free_all(int *arr, t_binary **root, c_llist **head)
 {
-  if (!src || !error_flag)
-      return;
-
-  while (*src == ' ' || *src == '\n' || *src == '\t' || 
-         *src == '\r' || *src == '\v' || *src == '\f')
-      src++;
-
-  if (*src == '+' || *src == '-')
-  {
-    if (*src == '-')
-      *sign = -1;
-    src++;
-  }
-
-  if (*src < '0' || *src > '9')
-  {
-    *error_flag = 1;
-    return;
-  }
-
+	if (arr)
+		free(arr);
+	if (root && *root)
+		freenclean_bst(root);
+	if (head && *head)
+		freenclean_list(head);
 }
 
-
-long og_atoi(char *src, int *error_flag)
+static void	exit_safely(int *arr, t_binary **root, c_llist **head_l)
 {
-  long num = 0;
-  int sign = 1;
-
-  init_loop_atoi(src,error_flag,&sign);
-  while (*src != '\0')
-  {
-      if (*src < '0' || *src > '9')
-      {
-        *error_flag = 1;
-        return (0);
-      }
-      num = num * 10 + (*src - '0');
-
-      if ((sign == 1 && num > 2147483647) || (sign == -1 && (-num) < -2147483648))
-      {
-        *error_flag = 1;
-        return (0);
-      }
-     src++;
-  }
-
-  return (num * (long)sign);
+	free_all(arr, root, head_l);
+	error_handler();
 }
 
-int main(int argc, char **argv)
+static void	execute_sort(c_llist **head_l, int *arr, t_binary **root)
 {
-  int error_status = 0;
-  long parsed_value;
-  int i = 1;
+	int		index;
+	c_llist	*b;
 
-  if (argc < 2)
-      return (0);
-
-  while (i < argc)
-  {
-    parsed_value = og_atoi(argv[i], &error_status);
-        
-    if (error_status == 1)
-    {
-      write(2, "Error\n", 6);
-      // Free any allocated memory here before exiting
-      return (1); 
-    }
-    // Proceed to check for duplicates and add parsed_value to your stack
-    i++;
-  }
-  return (0);
+	index = 0;
+	b = NULL;
+	sort_bst(*root, &index);
+	free_all(arr, root, NULL);
+	sort_stacks(head_l, &b);
+	freenclean_list(head_l);
+	if (b)
+		freenclean_list(&b);
 }
 
+static void	indexation_bst(int *arr, int size)
+{
+	int			i;
+	int			is_dupp;
+	t_binary	*root;
+	c_llist		*head_l;
+	c_llist		*new;
 
+	i = 1;
+	is_dupp = 0;
+	head_l = create_node(arr[0]);
+	root = create_bst(arr[0], head_l);
+	while (i < size)
+	{
+		new = add_new_node(arr[i], &head_l);
+		if (!new)
+			exit_safely(arr, &root, &head_l);
+		insert_bst(arr[i], root, new, &is_dupp);
+		if (is_dupp)
+			exit_safely(arr, &root, &head_l);
+		i++;
+	}
+	execute_sort(&head_l, arr, &root);
+}
+
+int	main(int argc, char **argv)
+{
+	int	*arr;
+	int	size;
+	int	i;
+	int	global_p;
+
+	if (argc < 2)
+		return (0);
+	size = 0;
+	i = 1;
+	while (i < argc)
+		size += checkncount(argv[i++]);
+	if (size == 0)
+		return (0);
+	arr = malloc(sizeof(int) * size);
+	if (!arr)
+		error_handler();
+	global_p = 0;
+	i = 1;
+	while (i < argc)
+		artons(argv[i++], arr, &global_p);
+	indexation_bst(arr, size);
+	return (0);
+}

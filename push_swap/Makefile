@@ -2,8 +2,10 @@ NAME        = push_swap
 CC          = cc
 CFLAGS      = -Wall -Wextra -Werror -g
 
-SRC         = main.c	push_swap.c	push.c	rotate.c \
-							reverse_rotate.c	stack_controls.c	swap.c
+SRC         = main.c	bst_controls.c	convertor.c	engine.c \
+							helper.c	list_controls.c	push.c	sort.c	\
+							push_swap_utils.c	reverse_rotate.c	rotate.c	\
+							swap.c	target.c	utils_2.c
               
 
 OBJ         = $(SRC:.c=.o)
